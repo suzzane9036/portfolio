@@ -1,0 +1,233 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+/* html,
+body {
+  scroll-behavior: smooth;
+} */
+
+.main-header {
+    margin-top:40px;
+    margin-left: 65px;
+    margin-right:65px;
+    margin-bottom:0;
+    line-height: 80px;
+    
+    /* position: sticky;
+        left: 0;
+        top: 0; */
+}
+
+h1 {
+    font-size: 45px;
+    height: 40px;
+    padding-bottom:35px;
+    background-color: white;
+}
+
+/* body {
+    position: relative;
+} */
+
+.navigation {
+    font-family: Times;
+    font-size:18px;
+    color:rgb(59, 59, 59);
+    width:100%;
+    text-align: right;
+    display: inline-block;
+    background-color: white;
+}
+
+.navigation-1 {
+    margin-right: 80px;
+    background-color: white;
+}
+
+.navigation a:link:last-child {
+margin-right: 0;
+}
+/* .navigation-1 {
+    margin-right: 80px;
+} */
+
+/* ------gallery-section------ */
+
+.gallery-section {
+    width:100%;
+    position: relative;
+}
+
+.inner-width {
+    max-width: 100%;
+    margin-left: 65px;
+    margin-right: 65px;
+    margin-bottom: 65px;
+}
+
+.inner-width .text {
+    text-align: left;
+    font-weight: bold;
+    height:24px;
+    margin: 40px 0;
+}
+
+.inner-width .profile-photo {
+    width: 100%;
+    margin: 30px auto;
+}
+
+.inner-width .profile-photo img {
+    display: block;
+    width: 30%;
+    margin: 0 auto;
+}
+
+.container {
+    width: 100%;
+    margin: 0 auto;
+}
+.introduce-text { 
+
+    width: 43%;
+    display: block;
+    text-align: left;
+    margin:0 auto;
+}
+
+p {
+    font-size: 14px;
+    line-height:20px;
+}
+
+.introduce-text .resume .linkedin {
+    color: orange;
+    font-weight: bold;
+    text-decoration: underline;
+    
+}
+
+.inner-width .issuu-link {
+    text-align: center;
+    font-weight: bold;
+    height:24px;
+    margin: 40px 0;
+}
+
+.gallery-section .gallery{
+    display: grid; 
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    justify-content: left;
+}
+
+.gallery-section .work {
+    overflow: hidden;
+ }
+
+.gallery-section .work .image img {
+     width: 100%;
+     height: auto;
+     /* padding:0px 10px; */
+     transition: 1.6s ease;
+ }
+
+.gallery-section .work .image:hover img {
+     transform: scale(1.15);
+ }
+
+
+h1,h2,h3,h4,.text {
+    font-family: Times;
+    color:rgb(59, 59, 59)
+}
+
+h2 {
+    font-size: 40px;
+    height: 40px;
+    padding-bottom:35px;
+    background-color: white;
+}
+/* h3,h4{
+    padding-left: 65px; 
+} */
+
+/* h2 {
+    font-size: 18px;
+} */
+
+h3,.text {
+    font-size: 18px;
+    padding-top: 20px;
+}
+
+h4, {
+    font-family: sans serif;
+    font-size: 12px;
+    font-weight:lighter;
+    margin-bottom: 65px;
+}
+/* h3,h4 {
+    margin-bottom: 10px;
+}  */
+/* img {
+     padding: 10px 40px;
+ } */
+
+
+.copyright {
+    margin-top: 50px;
+    padding:80px;
+    font-family: poppins-extralight,poppins,sans-serif;
+    font-size: 14px;
+    color:rgb(255, 255, 255);
+    text-align: center;
+    height: 14px;
+    background-color: black;
+}
+
+.aside {
+    background-color: beige;
+    border-top: 5px solid rgb(98, 178, 231);
+    border-bottom: 5px solid rgb(98, 178, 231);
+}
+/* 
+.home {
+    font-family: Times;
+    font-size: 42px;
+    font-weight:bold; 
+}*/
+
+.home:hover {    
+    color:rgb(143, 143, 143)
+
+}
+/* styling links */
+a:link, a:visited {
+    color:rgb(59, 59, 59);
+    text-decoration: none;
+    transition-duration: 0.4s;
+    transition-delay: 0.2s;
+}
+
+a:hover, a:active {
+    color:rgb(143, 143, 143)
+}
+
+.gallery-section .go-to-top .top{
+  text-decoration: none;
+  font-family: sans-serif;
+  color: rgb(59, 59, 59);
+  /* --offset: 50px;  */
+  position: absolute;
+  bottom: -20px;
+  right:20px;      
+  place-self: end;
+  margin-top: calc(100vh + var(--offset));
+  font-size: 16px;
+  padding:15px;
+  cursor: pointer;
+}
+
