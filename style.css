@@ -139,9 +139,9 @@ p {
  }
 
 
-h1,h2,h3,h4,.text {
+h1,h2,h3,.text {
     font-family: Times;
-    color:rgb(59, 59, 59)
+    color:rgb(59, 59, 59);
 }
 
 h2 {
@@ -168,6 +168,7 @@ h4, {
     font-size: 12px;
     font-weight:lighter;
     margin-bottom: 65px;
+    color:rgb(59, 59, 59);
 }
 /* h3,h4 {
     margin-bottom: 10px;
