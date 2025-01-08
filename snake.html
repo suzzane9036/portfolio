@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>0102祝您「贪吃不怕 蛇年大吉」</title>
+  <style>
+    body {
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: #f0f0f0;
+      position: relative;
+    }
+    canvas {
+      border: 20px solid rgb(255, 255, 255);
+      display: block;
+    }
+    .controls {
+      position: absolute;
+      right: calc(50% - 480px); /* 放置在画布右上角外侧 */
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    button {
+      width: 40px;
+      height: 40px;
+      background: #E7231E;
+      color: white;
+      border: none;
+      border-radius: 0px;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    button:hover {
+      background: #B22234;
+    }
+    button img {
+      width: 20px;
+      height: 20px;
+    }
+    .row-text {
+      position: absolute;
+      left: 0;
+      right: 0;
+      text-align: center;
+      color: white;
+      font-weight: 700;
+  
+      font-family: Swei Alias Sans CJK SC, sans-serif;
+    }
+    #textRow1 {
+      top: calc(50% - 223px); /* 第二排 */
+      font-size: 28px;
+     
+    }
+    #textRow2 {
+      bottom: calc(50% - 227px); /* 倒数第二排 */
+      font-size: 54px;
+    
+    }
+
+  </style>
+</head>
+<body>
+
+  <div class="controls">
+    <button id="startButton">
+      <img src="https://img.icons8.com/ios-filled/50/ffffff/play.png" alt="开始">
+    </button>
+    <button id="pauseButton">
+      <img src="https://img.icons8.com/ios-filled/50/ffffff/pause.png" alt="暂停">
+    </button>
+
+  
+
+  </div>
+
+  <div id="textRow1" class="row-text">0102 DESIGN</div>
+    <div id="textRow2" class="row-text">HAPPY NEW YEAR</div>
+
+  <canvas id="gridCanvas" width="800" height="520"></canvas>
+  <script src="script.js"></script>
+</body>
+</html>
