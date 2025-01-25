@@ -1,9 +1,59 @@
-const canvas = document.getElementById("gridCanvas");
-const ctx = canvas.getContext("2d");
+let canvas, ctx;
+let gridSize, rows, cols;
+let snake = [];
+let food = null;
+let direction = "right";
+let gameInterval = null;
 
-const gridSize = 40; // 每个格子的大小
-const rows = canvas.height / gridSize; // 行数
-const cols = canvas.width / gridSize;  // 列数
+// 确保在页面加载完成后初始化
+window.addEventListener("DOMContentLoaded", () => {
+    initGame();
+    startGame();
+});
+
+function initGame() {
+    canvas = document.getElementById("gridCanvas");
+    if (!canvas) {
+        console.error("Canvas element not found!");
+        return;
+    }
+    ctx = canvas.getContext("2d");
+    
+    // 计算尺寸
+    calculateDimensions();
+    
+    // 初始化蛇的位置
+    resetGame();
+    
+    // 添加窗口大小变化监听器
+    window.addEventListener('resize', debounce(() => {
+        calculateDimensions();
+        resetGame();
+        // 如果游戏正在运行，需要重新绘制
+        if (gameInterval) {
+            drawGame();
+        }
+    }, 250));
+}
+
+function calculateDimensions() {
+    const isMobile = window.innerWidth <= 768;  // 提高断点值到 1024px
+    
+    if (isMobile) {
+        // 移动端竖屏布局
+        canvas.width = Math.min(window.innerWidth * 0.98, 600);    
+        canvas.height = Math.min(window.innerHeight * 0.8, 800);   
+        gridSize = Math.floor(canvas.width / 10);                  
+    } else {
+        // PC端横屏布局
+        canvas.width = Math.min(window.innerWidth * 0.6, 1200);    
+        canvas.height = Math.min(window.innerHeight * 0.8, 800);  
+        gridSize = Math.floor(canvas.width / 20);                  
+    }
+
+    cols = Math.floor(canvas.width / gridSize);
+    rows = Math.floor(canvas.height / gridSize);
+}
 
 const snakeBodyColor = "#FFFFFF"; // 白色方块
 const snakeGradientColor = "#AF474C"; // 渐变主色
@@ -11,25 +61,43 @@ const foodColor = "#FFFFFF"; // 食物颜色
 const eyeColor = "#000000"; // 眼睛颜色
 const tongueColor = "#FFFFFF"; // 舌头颜色
 
-
-
-// 初始化蛇和食物的位置
-let snake = [
-  { x: 120, y: 120 }, // 蛇头
-  { x: 80, y: 120 },  // 第二格
-  { x: 40, y: 120 },  // 身体部分
-];
-let food = { x: 200, y: 200 }; // 初始食物的位置
-let direction = "right"; // 初始前进方向（可选值：'up', 'down', 'left', 'right'）
-
-
-let gameInterval = null; // 游戏循环的定时器
 let isPaused = false;    // 游戏是否暂停
 
-// 添加触摸事件相关变量
-let touchStartX = null;
-let touchStartY = null;
-const minSwipeDistance = 30; // 最小滑动距离，防止误触
+// 添加防抖函数
+function debounce(func, wait) {
+  let timeout;
+  return function executedFunction(...args) {
+    const later = () => {
+      clearTimeout(timeout);
+      func(...args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+}
+
+// 修改食物位置计算函数
+function getRandomFoodPosition() {
+  return {
+    x: Math.floor(Math.random() * cols) * gridSize,
+    y: Math.floor(Math.random() * rows) * gridSize
+  };
+}
+
+// 重置游戏状态
+function resetGame() {
+  const startX = Math.floor(cols / 2) * gridSize;
+  const startY = Math.floor(rows / 2) * gridSize;
+  
+  snake = [
+    { x: startX, y: startY },
+    { x: startX - gridSize, y: startY },
+    { x: startX - gridSize * 2, y: startY }
+  ];
+  
+  direction = "right";
+  food = getRandomFoodPosition();
+}
 
 // 启动暂停游戏
 function startGame() {
@@ -53,7 +121,6 @@ function pauseGame() {
   }
 }
 
-
 // 按钮事件绑定
 window.addEventListener("DOMContentLoaded", () => {
   document.getElementById("startButton").addEventListener("click", startGame);
@@ -63,7 +130,6 @@ window.addEventListener("DOMContentLoaded", () => {
   document.getElementById("startButton").disabled = false;
   document.getElementById("pauseButton").disabled = true;
 });
-
 
 // 更新游戏逻辑：让蛇移动
 function updateGame() {
@@ -75,8 +141,6 @@ function updateGame() {
 function moveSnake() {
   const head = { ...snake[0] }; // 获取蛇头
 
-
-  
   // 根据当前方向更新蛇头的位置
   if (direction === "right") {
     head.x += gridSize;
@@ -112,20 +176,6 @@ function moveSnake() {
   snake.unshift(head);
 }
 
-// 防止新生成的食物与蛇重叠。
-function getRandomFoodPosition() {
-  let newFoodPosition;
-
-  do {
-    newFoodPosition = {
-      x: Math.floor(Math.random() * cols) * gridSize,
-      y: Math.floor(Math.random() * rows) * gridSize,
-    };
-  } while (snake.some((part) => part.x === newFoodPosition.x && part.y === newFoodPosition.y));
-
-  return newFoodPosition;
-}
-
 // 监听键盘事件以改变方向并防止默认行为
 document.addEventListener("keydown", (e) => {
   // 阻止默认的键盘滚动行为
@@ -144,7 +194,6 @@ document.addEventListener("keydown", (e) => {
     direction = "up";
   }
 
-
   if (
     head.x < 0 || head.x >= canvas.width ||
     head.y < 0 || head.y >= canvas.height
@@ -157,10 +206,7 @@ document.addEventListener("keydown", (e) => {
     alert("游戏结束！");
     return;
   }
-  
 });
-
-
 
 // 绘制蛇
 function drawSnake() {
@@ -317,7 +363,6 @@ ctx.fillRect(x, y, gridSize, gridSize);
   ctx.fill();
 }
 
-
 // 修正的眼睛渐变
 function createEyeGradient(x, y, radius) {
   const gradient = ctx.createLinearGradient(x - radius, y - radius, x + radius, y + radius);
@@ -326,8 +371,6 @@ function createEyeGradient(x, y, radius) {
   gradient.addColorStop(1, "#BB787B"); // 红色
   return gradient;
 }
-
-
 
 // 动态创建蛇身体背景色
 function createGradientColor(x, y) {
@@ -441,61 +484,6 @@ function drawGame() {
   drawGrid(); // 绘制背景网格
   drawFood(); // 绘制食物
   drawSnake(); // 绘制蛇
-}
-
-// 添加触摸事件监听器
-canvas.addEventListener('touchstart', handleTouchStart);
-canvas.addEventListener('touchmove', handleTouchMove);
-canvas.addEventListener('touchend', handleTouchEnd);
-
-// 处理触摸开始事件
-function handleTouchStart(e) {
-  e.preventDefault(); // 阻止默认滚动行为
-  const touch = e.touches[0];
-  touchStartX = touch.clientX;
-  touchStartY = touch.clientY;
-}
-
-// 处理触摸移动事件
-function handleTouchMove(e) {
-  e.preventDefault(); // 阻止默认滚动行为
-}
-
-// 处理触摸结束事件
-function handleTouchEnd(e) {
-  e.preventDefault();
-  if (!touchStartX || !touchStartY) return;
-
-  const touch = e.changedTouches[0];
-  const deltaX = touch.clientX - touchStartX;
-  const deltaY = touch.clientY - touchStartY;
-
-  // 确保滑动距离足够长，避免误触
-  if (Math.abs(deltaX) < minSwipeDistance && Math.abs(deltaY) < minSwipeDistance) {
-    touchStartX = null;
-    touchStartY = null;
-    return;
-  }
-
-  // 判断滑动方向
-  if (Math.abs(deltaX) > Math.abs(deltaY)) {
-    // 水平滑动
-    if (deltaX > 0 && direction !== 'left') {
-      direction = 'right';
-    } else if (deltaX < 0 && direction !== 'right') {
-      direction = 'left';
-    }
-  } else {
-    // 垂直滑动
-    if (deltaY > 0 && direction !== 'up') {
-      direction = 'down';
-    } else if (deltaY < 0 && direction !== 'down') {
-      direction = 'up';
-    }
-  }
-
-  touchStartX = null;
-  touchStartY = null;
 }
 
 // 开始绘制游戏
