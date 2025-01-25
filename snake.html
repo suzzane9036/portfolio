@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,9 +20,11 @@
     }
     .controls {
       position: absolute;
-      right: calc(50% - 480px); /* 放置在画布右上角外侧 */
+      bottom: 20px;  /* 从底部开始定位 */
+      left: 50%;     /* 水平居中 */
+      transform: translateX(-50%);  /* 确保完全居中 */
       display: flex;
-      flex-direction: column;
+      flex-direction: row;  /* 改为水平排列 */
       gap: 20px;
     }
     button {
@@ -84,7 +86,7 @@
   <div id="textRow1" class="row-text">0102 DESIGN</div>
     <div id="textRow2" class="row-text">HAPPY NEW YEAR</div>
 
-  <canvas id="gridCanvas" width="800" height="520"></canvas>
+  <canvas id="gridCanvas"></canvas>
   <script src="script.js"></script>
 </body>
 </html>
