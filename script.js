@@ -8,7 +8,7 @@ let gameInterval = null;
 // 确保在页面加载完成后初始化
 window.addEventListener("DOMContentLoaded", () => {
     initGame();
-    startGame();
+    drawGame();  // 只绘制初始状态，不启动游戏
 });
 
 function initGame() {
@@ -19,36 +19,31 @@ function initGame() {
     }
     ctx = canvas.getContext("2d");
     
-    // 计算尺寸
     calculateDimensions();
-    
-    // 初始化蛇的位置
     resetGame();
     
-    // 添加窗口大小变化监听器
     window.addEventListener('resize', debounce(() => {
         calculateDimensions();
         resetGame();
-        // 如果游戏正在运行，需要重新绘制
-        if (gameInterval) {
-            drawGame();
-        }
+        drawGame();  // 重绘当前状态
     }, 250));
 }
 
 function calculateDimensions() {
-    const isMobile = window.innerWidth <= 768;  // 提高断点值到 1024px
+    const isMobile = window.innerWidth <= 768;
+    const minGridSize = 40;  // 设置最小格子尺寸为40
     
     if (isMobile) {
-        // 移动端竖屏布局
-        canvas.width = Math.min(window.innerWidth * 0.98, 600);    
-        canvas.height = Math.min(window.innerHeight * 0.8, 800);   
-        gridSize = Math.floor(canvas.width / 10);                  
+        // 移动端布局
+        gridSize = Math.max(Math.floor(window.innerWidth / 15), minGridSize);  // 确保不小于最小尺寸
+        canvas.width = gridSize * Math.floor(window.innerWidth / gridSize);    // 确保宽度能被格子大小整除
+        canvas.height = gridSize * Math.floor((window.innerHeight * 0.7) / gridSize);  // 确保高度也能被格子大小整除
     } else {
         // PC端横屏布局
-        canvas.width = Math.min(window.innerWidth * 0.6, 1200);    
-        canvas.height = Math.min(window.innerHeight * 0.8, 800);  
-        gridSize = Math.floor(canvas.width / 20);                  
+        const maxWidth = Math.min(window.innerWidth * 0.6, 1200);
+        gridSize = Math.max(Math.floor(maxWidth / 20), minGridSize);  // 确保不小于最小尺寸
+        canvas.width = gridSize * Math.floor(maxWidth / gridSize);    // 确保宽度能被格子大小整除
+        canvas.height = gridSize * Math.floor(Math.min(window.innerHeight * 0.8, 800) / gridSize);  // 确保高度能被格子大小整除
     }
 
     cols = Math.floor(canvas.width / gridSize);
@@ -176,37 +171,63 @@ function moveSnake() {
   snake.unshift(head);
 }
 
-// 监听键盘事件以改变方向并防止默认行为
-document.addEventListener("keydown", (e) => {
-  // 阻止默认的键盘滚动行为
-  if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) {
-    e.preventDefault();
-  }
+// 添加触摸事件处理
+let touchStartX = null;
+let touchStartY = null;
 
-  // 更新方向
-  if (e.key === "ArrowRight" && direction !== "left") {
-    direction = "right";
-  } else if (e.key === "ArrowLeft" && direction !== "right") {
-    direction = "left";
-  } else if (e.key === "ArrowDown" && direction !== "up") {
-    direction = "down";
-  } else if (e.key === "ArrowUp" && direction !== "down") {
-    direction = "up";
-  }
-
-  if (
-    head.x < 0 || head.x >= canvas.width ||
-    head.y < 0 || head.y >= canvas.height
-  ) {
-    console.log("游戏结束");
-    clearInterval(gameInterval);
-    gameInterval = null;
-    document.getElementById("startButton").disabled = false; // 启用 "开始" 按钮
-    document.getElementById("pauseButton").disabled = true;  // 禁用 "暂停" 按钮
-    alert("游戏结束！");
-    return;
-  }
+document.addEventListener('touchstart', function(e) {
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
 });
+
+document.addEventListener('touchend', function(e) {
+    if (!touchStartX || !touchStartY) {
+        return;
+    }
+
+    let touchEndX = e.changedTouches[0].clientX;
+    let touchEndY = e.changedTouches[0].clientY;
+
+    let deltaX = touchEndX - touchStartX;
+    let deltaY = touchEndY - touchStartY;
+
+    // 确定滑动方向（需要有最小滑动距离，避免误触）
+    const minSwipeDistance = 30;
+
+    if (Math.abs(deltaX) > Math.abs(deltaY)) {
+        // 水平滑动
+        if (Math.abs(deltaX) > minSwipeDistance) {
+            if (deltaX > 0 && direction !== "left") {
+                direction = "right";
+            } else if (deltaX < 0 && direction !== "right") {
+                direction = "left";
+            }
+        }
+    } else {
+        // 垂直滑动
+        if (Math.abs(deltaY) > minSwipeDistance) {
+            if (deltaY > 0 && direction !== "up") {
+                direction = "down";
+            } else if (deltaY < 0 && direction !== "down") {
+                direction = "up";
+            }
+        }
+    }
+
+    // 如果游戏还没开始，开始游戏
+    if (!gameInterval) {
+        startGame();
+    }
+
+    // 重置触摸起始点
+    touchStartX = null;
+    touchStartY = null;
+});
+
+// 阻止默认的触摸行为（如页面滚动）
+document.addEventListener('touchmove', function(e) {
+    e.preventDefault();
+}, { passive: false });
 
 // 绘制蛇
 function drawSnake() {
