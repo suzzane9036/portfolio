@@ -26,6 +26,11 @@ let direction = "right"; // 初始前进方向（可选值：'up', 'down', 'left
 let gameInterval = null; // 游戏循环的定时器
 let isPaused = false;    // 游戏是否暂停
 
+// 添加触摸事件相关变量
+let touchStartX = null;
+let touchStartY = null;
+const minSwipeDistance = 30; // 最小滑动距离，防止误触
+
 // 启动暂停游戏
 function startGame() {
   console.log("Start button clicked");
@@ -438,7 +443,60 @@ function drawGame() {
   drawSnake(); // 绘制蛇
 }
 
+// 添加触摸事件监听器
+canvas.addEventListener('touchstart', handleTouchStart);
+canvas.addEventListener('touchmove', handleTouchMove);
+canvas.addEventListener('touchend', handleTouchEnd);
 
+// 处理触摸开始事件
+function handleTouchStart(e) {
+  e.preventDefault(); // 阻止默认滚动行为
+  const touch = e.touches[0];
+  touchStartX = touch.clientX;
+  touchStartY = touch.clientY;
+}
+
+// 处理触摸移动事件
+function handleTouchMove(e) {
+  e.preventDefault(); // 阻止默认滚动行为
+}
+
+// 处理触摸结束事件
+function handleTouchEnd(e) {
+  e.preventDefault();
+  if (!touchStartX || !touchStartY) return;
+
+  const touch = e.changedTouches[0];
+  const deltaX = touch.clientX - touchStartX;
+  const deltaY = touch.clientY - touchStartY;
+
+  // 确保滑动距离足够长，避免误触
+  if (Math.abs(deltaX) < minSwipeDistance && Math.abs(deltaY) < minSwipeDistance) {
+    touchStartX = null;
+    touchStartY = null;
+    return;
+  }
+
+  // 判断滑动方向
+  if (Math.abs(deltaX) > Math.abs(deltaY)) {
+    // 水平滑动
+    if (deltaX > 0 && direction !== 'left') {
+      direction = 'right';
+    } else if (deltaX < 0 && direction !== 'right') {
+      direction = 'left';
+    }
+  } else {
+    // 垂直滑动
+    if (deltaY > 0 && direction !== 'up') {
+      direction = 'down';
+    } else if (deltaY < 0 && direction !== 'down') {
+      direction = 'up';
+    }
+  }
+
+  touchStartX = null;
+  touchStartY = null;
+}
 
 // 开始绘制游戏
 drawGame();
