@@ -94,36 +94,102 @@ function resetGame() {
   food = getRandomFoodPosition();
 }
 
-// 启动暂停游戏
+// 开始游戏
 function startGame() {
-  console.log("Start button clicked");
-  if (!gameInterval) { // 确保游戏未运行
-    gameInterval = setInterval(updateGame, 400); // 每 400 毫秒运行一次
-    document.getElementById("startButton").disabled = true; // 禁用 "开始" 按钮
-    document.getElementById("pauseButton").disabled = false; // 启用 "暂停" 按钮
+    if (gameInterval) return; // 如果游戏已经在运行，直接返回
+    
+    gameInterval = setInterval(updateGame, 400); // 改回原来的速度
     isPaused = false;
-  }
+    
+    // 更新按钮状态
+    document.getElementById("startButton").disabled = true;
+    document.getElementById("pauseButton").disabled = false;
 }
 
+// 暂停游戏
 function pauseGame() {
-  console.log("Pause button clicked");
-  if (gameInterval) {
-    clearInterval(gameInterval); // 停止定时器
+    if (!gameInterval) return; // 如果游戏未在运行，直接返回
+    
+    clearInterval(gameInterval);
     gameInterval = null;
-    document.getElementById("startButton").disabled = false; // 启用 "开始" 按钮
-    document.getElementById("pauseButton").disabled = true; // 禁用 "暂停" 按钮
     isPaused = true;
-  }
+    
+    // 更新按钮状态
+    document.getElementById("startButton").disabled = false;
+    document.getElementById("pauseButton").disabled = true;
 }
 
-// 按钮事件绑定
-window.addEventListener("DOMContentLoaded", () => {
-  document.getElementById("startButton").addEventListener("click", startGame);
-  document.getElementById("pauseButton").addEventListener("click", pauseGame);
+// 切换游戏状态
+function toggleGame() {
+    if (gameInterval) {
+        pauseGame();
+    } else {
+        startGame();
+    }
+}
 
-  // 初始状态：开始按钮可用，暂停按钮禁用
-  document.getElementById("startButton").disabled = false;
-  document.getElementById("pauseButton").disabled = true;
+// 重置游戏状态
+function resetGameState() {
+    // 停止当前游戏循环
+    if (gameInterval) {
+        clearInterval(gameInterval);
+        gameInterval = null;
+    }
+    
+    // 重置游戏状态
+    resetGame();
+    drawGame();
+    
+    // 重置按钮状态
+    document.getElementById("startButton").disabled = false;
+    document.getElementById("pauseButton").disabled = true;
+    isPaused = false;
+}
+
+// 修改按钮事件绑定
+window.addEventListener("DOMContentLoaded", () => {
+    initGame();
+    drawGame();  // 只绘制初始状态，不启动游戏
+    
+    // 绑定按钮事件
+    document.getElementById("startButton").addEventListener("click", startGame);
+    document.getElementById("pauseButton").addEventListener("click", pauseGame);
+    document.getElementById("resetButton").addEventListener("click", resetGameState);
+    document.getElementById("saveButton").addEventListener("click", saveCanvas);  // 添加保存按钮事件
+
+    // 初始状态：开始按钮可用，暂停按钮禁用
+    document.getElementById("startButton").disabled = false;
+    document.getElementById("pauseButton").disabled = true;
+});
+
+// 修改键盘事件监听，确保回车键和方向键的处理都在同一个监听器中
+document.addEventListener("keydown", (e) => {
+    // 回车键控制
+    if (e.key === "Enter") {
+        e.preventDefault();
+        toggleGame();
+        return;
+    }
+    
+    // 方向键控制
+    if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) {
+        e.preventDefault();
+        
+        if (!gameInterval) {
+            startGame();
+        }
+
+        // 更新方向
+        if (e.key === "ArrowRight" && direction !== "left") {
+            direction = "right";
+        } else if (e.key === "ArrowLeft" && direction !== "right") {
+            direction = "left";
+        } else if (e.key === "ArrowDown" && direction !== "up") {
+            direction = "down";
+        } else if (e.key === "ArrowUp" && direction !== "down") {
+            direction = "up";
+        }
+    }
 });
 
 // 更新游戏逻辑：让蛇移动
@@ -509,6 +575,50 @@ function drawGame() {
 
 // 开始绘制游戏
 drawGame();
+
+// 修改保存画布功能
+function saveCanvas() {
+    // 暂停游戏
+    const wasRunning = !!gameInterval;
+    if (wasRunning) {
+        pauseGame();
+    }
+    
+    // 创建临时画布（包含边框空间）
+    const tempCanvas = document.createElement('canvas');
+    const tempCtx = tempCanvas.getContext('2d');
+    const borderWidth = 20; // 边框宽度
+    
+    // 设置临时画布尺寸（加上边框宽度）
+    tempCanvas.width = canvas.width + (borderWidth * 2);
+    tempCanvas.height = canvas.height + (borderWidth * 2);
+    
+    // 绘制边框
+    tempCtx.strokeStyle = 'white'; // 边框颜色=白色
+    tempCtx.lineWidth = borderWidth;
+    tempCtx.strokeRect(
+        borderWidth / 2,
+        borderWidth / 2,
+        tempCanvas.width - borderWidth,
+        tempCanvas.height - borderWidth
+    );
+    
+    // 将原画布内容绘制到临时画布（考虑边框偏移）
+    tempCtx.drawImage(canvas, borderWidth, borderWidth);
+    
+    // 创建下载链接
+    const link = document.createElement('a');
+    link.download = '0102Design祝您蛇年大吉贪吃不怕-专属贺卡.png';
+    link.href = tempCanvas.toDataURL('image/png');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    // 如果游戏之前在运行，则恢复
+    if (wasRunning) {
+        startGame();
+    }
+}
 
 
 

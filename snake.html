@@ -69,37 +69,22 @@
       font-size: 54px;
     
     }
-
-    #gridCanvas {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      box-sizing: border-box;  /* 确保边框包含在宽度内 */
+    #resetButton {
+      font-size: 20px;
+      transform: scaleX(-1);  /* 让箭头朝逆时针方向 */
     }
-
-    @media screen and (max-width: 768px) {
-      #gridCanvas {
-        width: 100vw;  /* 设置为视口宽度 */
-        left: 0;
-        transform: translateY(-50%);  /* 只在垂直方向居中 */
-      }
+    #saveButton {
+      font-size: 20px;
     }
-
   </style>
 </head>
 <body>
 
   <div class="controls">
-    <button id="startButton">
-      <img src="https://img.icons8.com/ios-filled/50/ffffff/play.png" alt="开始">
-    </button>
-    <button id="pauseButton">
-      <img src="https://img.icons8.com/ios-filled/50/ffffff/pause.png" alt="暂停">
-    </button>
-
-  
-
+    <button id="startButton">▶</button>
+    <button id="pauseButton">❚❚</button>
+    <button id="resetButton">↺</button>
+    <button id="saveButton">💾</button>
   </div>
 
   <div id="textRow1" class="row-text">0102 DESIGN</div>
