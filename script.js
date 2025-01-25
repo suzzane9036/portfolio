@@ -146,20 +146,45 @@ function resetGameState() {
     isPaused = false;
 }
 
-// 修改按钮事件绑定
+// 修改事件绑定，确保在移动端也能正常工作
 window.addEventListener("DOMContentLoaded", () => {
     initGame();
-    drawGame();  // 只绘制初始状态，不启动游戏
+    drawGame();
     
-    // 绑定按钮事件
-    document.getElementById("startButton").addEventListener("click", startGame);
-    document.getElementById("pauseButton").addEventListener("click", pauseGame);
-    document.getElementById("resetButton").addEventListener("click", resetGameState);
-    document.getElementById("saveButton").addEventListener("click", saveCanvas);  // 添加保存按钮事件
+    // 绑定按钮事件，同时支持点击和触摸
+    const startButton = document.getElementById("startButton");
+    const pauseButton = document.getElementById("pauseButton");
+    const resetButton = document.getElementById("resetButton");
+    const saveButton = document.getElementById("saveButton");
 
-    // 初始状态：开始按钮可用，暂停按钮禁用
-    document.getElementById("startButton").disabled = false;
-    document.getElementById("pauseButton").disabled = true;
+    // 为每个按钮同时添加 click 和 touchend 事件
+    startButton.addEventListener("click", startGame);
+    startButton.addEventListener("touchend", (e) => {
+        e.preventDefault();
+        startGame();
+    });
+
+    pauseButton.addEventListener("click", pauseGame);
+    pauseButton.addEventListener("touchend", (e) => {
+        e.preventDefault();
+        pauseGame();
+    });
+
+    resetButton.addEventListener("click", resetGameState);
+    resetButton.addEventListener("touchend", (e) => {
+        e.preventDefault();
+        resetGameState();
+    });
+
+    saveButton.addEventListener("click", saveCanvas);
+    saveButton.addEventListener("touchend", (e) => {
+        e.preventDefault();
+        saveCanvas();
+    });
+
+    // 初始状态设置
+    startButton.disabled = false;
+    pauseButton.disabled = true;
 });
 
 // 修改键盘事件监听，确保回车键和方向键的处理都在同一个监听器中
@@ -576,7 +601,7 @@ function drawGame() {
 // 开始绘制游戏
 drawGame();
 
-// 修改保存画布功能
+// 修改保存画布功能，确保在移动端也能工作
 function saveCanvas() {
     // 暂停游戏
     const wasRunning = !!gameInterval;
@@ -587,7 +612,7 @@ function saveCanvas() {
     // 创建临时画布（包含边框空间）
     const tempCanvas = document.createElement('canvas');
     const tempCtx = tempCanvas.getContext('2d');
-    const borderWidth = 20; // 边框宽度
+    const borderWidth = 20; // 增加边框宽度，使其在移动端更明显
     
     // 设置临时画布尺寸（加上边框宽度）
     tempCanvas.width = canvas.width + (borderWidth * 2);
@@ -606,13 +631,25 @@ function saveCanvas() {
     // 将原画布内容绘制到临时画布（考虑边框偏移）
     tempCtx.drawImage(canvas, borderWidth, borderWidth);
     
-    // 创建下载链接
-    const link = document.createElement('a');
-    link.download = '0102Design祝您蛇年大吉贪吃不怕-专属贺卡.png';
-    link.href = tempCanvas.toDataURL('image/png');
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    try {
+        // 创建下载链接
+        const link = document.createElement('a');
+        link.download = '0102Design祝您蛇年大吉贪吃不怕-专属贺卡.png';
+        link.href = tempCanvas.toDataURL('image/png');
+        
+        // 在移动端，我们需要确保链接是可见的
+        link.style.display = 'none';
+        document.body.appendChild(link);
+        link.click();
+        
+        // 给一点时间让下载开始
+        setTimeout(() => {
+            document.body.removeChild(link);
+        }, 100);
+    } catch (e) {
+        console.error('保存失败:', e);
+        alert('保存失败，请稍后重试');
+    }
     
     // 如果游戏之前在运行，则恢复
     if (wasRunning) {
