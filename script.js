@@ -25,7 +25,7 @@ window.addEventListener("DOMContentLoaded", () => {
         left: -100%;
         transform: translate(-50%, -50%);
         color: white;
-        font-family: 'Swei Alias Sans CJK SC';
+        font-family: 'Swei Alias Sans CJK SC', 'PingFang SC', 'Microsoft YaHei', 'SimHei', sans-serif;
         font-size: 16px;
         white-space: nowrap;
         opacity: 0;
@@ -152,13 +152,13 @@ function debounce(func, wait) {
 
 // 修改食物位置计算函数
 function getRandomFoodPosition() {
-    let newFood;
+    let newFood = null;
     let validPosition = false;
     
     while (!validPosition) {
-        // 生成新的位置，排除最外圈
         const x = (1 + Math.floor(Math.random() * (cols - 2))) * gridSize;
-        const y = (1 + Math.floor(Math.random() * (rows - 2))) * gridSize;
+        // 修改 y 的范围，从第5行开始 (4 * gridSize)
+        const y = (4 + Math.floor(Math.random() * (rows - 5))) * gridSize;
         
         // 检查是否与蛇身重叠
         const isOnSnake = snake.some(segment => segment.x === x && segment.y === y);
@@ -771,7 +771,7 @@ function saveCanvas() {
     tempCtx.stroke();
     
     // 添加文字
-    tempCtx.font = 'bold 16px "Swei Alias Sans CJK SC"';
+    tempCtx.font = 'bold 16px "Swei Alias Sans CJK SC", "PingFang SC", "Microsoft YaHei", "SimHei", sans-serif';
     tempCtx.fillStyle = 'white';
     tempCtx.textAlign = 'center';
     tempCtx.fillText('0102DESIGN', tempCanvas.width / 2, borderWidth + 30);
@@ -786,7 +786,7 @@ function saveCanvas() {
         scoreText = "贪吃巅峰，能吃是福！";
     }
     
-    tempCtx.font = 'italic bold 24px "Swei Alias Sans CJK SC"';
+    tempCtx.font = 'italic bold 24px "Swei Alias Sans CJK SC", "PingFang SC", "Microsoft YaHei", "SimHei", sans-serif';
     tempCtx.fillText(scoreText, tempCanvas.width / 2, borderWidth + 60);
     
     // 绘制底部边框和白色背景
@@ -809,14 +809,14 @@ function saveCanvas() {
     );
     
     // 添加底部文字
-    tempCtx.font = 'bold 32px "Swei Alias Sans CJK SC"';
+    tempCtx.font = 'bold 32px "Swei Alias Sans CJK SC", "PingFang SC", "Microsoft YaHei", "SimHei", sans-serif';
     tempCtx.fillStyle = '#E7231E';
     tempCtx.textAlign = 'left';
     const textLeftX = borderWidth;
     const textBaseY = finalSize + borderWidth;
     tempCtx.fillText('Happy Chinese New Year', textLeftX, textBaseY + 40);
     
-    tempCtx.font = '20px "Swei Alias Sans CJK SC"';
+    tempCtx.font = '20px "Swei Alias Sans CJK SC", "PingFang SC", "Microsoft YaHei", "SimHei", sans-serif';
     tempCtx.fillText(`吃了${foodCount}个小目标`, textLeftX, textBaseY + 70);
     tempCtx.fillText(`打败了全国99.75%的小蛇`, textLeftX, textBaseY + 98);
     
@@ -895,7 +895,7 @@ function showGameOverDialog() {
         height: ${dialogHeight}px;
         box-sizing: border-box;
         z-index: 1000;
-        font-family: 'Swei Alias Sans CJK SC', PingFang SC, -apple-system, BlinkMacSystemFont, Roboto, Helvetica Neue, Helvetica, Arial, sans-serif;
+        font-family: 'Swei Alias Sans CJK SC', 'PingFang SC', 'Microsoft YaHei', 'SimHei', sans-serif;
         border: 10px solid white;
         background-image: url(${dialogCanvas.toDataURL()});
         box-shadow: 0 0 10px rgba(0,0,0,0.3);
@@ -922,7 +922,7 @@ function showGameOverDialog() {
                 width: 200px;
                 height: 40px;
                 font-size: 16px;
-                font-family: 'Swei Alias Sans CJK SC';
+                font-family: 'Swei Alias Sans CJK SC', 'PingFang SC', 'Microsoft YaHei', 'SimHei', sans-serif;
                 display: flex;
                 align-items: center;
                 justify-content: center;
@@ -940,7 +940,7 @@ function showGameOverDialog() {
                 width: 200px;
                 height: 40px;
                 font-size: 16px;
-                font-family: 'Swei Alias Sans CJK SC';
+                font-family: 'Swei Alias Sans CJK SC', 'PingFang SC', 'Microsoft YaHei', 'SimHei', sans-serif;
                 display: flex;
                 align-items: center;
                 justify-content: center;
